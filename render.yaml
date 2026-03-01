@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: ghostscore-api
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MONAD_RPC_URL
+        sync: false
+      - key: DEPLOYER_PRIVATE_KEY
+        sync: false
+      - key: ORACLE_ADDRESS
+        sync: false
+      - key: PINATA_API_KEY
+        sync: false
+      - key: PINATA_SECRET
+        sync: false
+      - key: AGENT_IDENTITY_REGISTRY
+        value: "0xf18cC568d74944332B19CDE849C87EdF5eb2d0ff"
+      - key: REPUTATION_REGISTRY_ADDRESS
+        value: "0x1799B10C475D5C3765eD9b03CC1A49fc3D958f06"
+      - key: VALIDATION_REGISTRY_ADDRESS
+        value: "0x92FC595C5fe3c6a1c9DB8348816d189C004CdE47"
+      - key: API_GATEKEEPER_ADDRESS
+        value: "0x87D86339215918B1E4F9c065659D6bb29aE4f961"
+      - key: GOVERNANCE_ADDRESS
+        value: "0xdD7a43369e17D5430875E6B407acE89EAf1A8866"
