@@ -102,6 +102,7 @@ export default function App() {
   const [powerUpTriggered, setPowerUpTriggered]  = useState(false);
   const prevScoreRef                             = useRef<number>(0);
   const scoreInitializedRef                       = useRef(false);
+  const powerUpWalletRef                          = useRef<string>("");
 
   const ghostScore = useGhostScoreEvents(walletAddress || null);
 
@@ -116,6 +117,7 @@ export default function App() {
       return;
     }
     if (!walletAddress || status !== "registered") return;
+    scoreInitializedRef.current = false; // Reset until we have this wallet's score
     api.getScore(walletAddress).then((data) => {
       prevScoreRef.current = data.score ?? 0;
       scoreInitializedRef.current = true;
@@ -124,20 +126,26 @@ export default function App() {
     });
   }, [walletAddress, status]);
 
-  // Trigger power-up when score crosses 50
+  // Trigger power-up when score crosses 50 (per wallet — each new agent gets it once)
   useEffect(() => {
-    if (!scoreInitializedRef.current) return;
+    if (!scoreInitializedRef.current || !walletAddress) return;
     const newScore = ghostScore.score;
     const prev = prevScoreRef.current;
     prevScoreRef.current = newScore;
-    if (prev < 50 && newScore >= 50 && localStorage.getItem("ghostscore_powerup_shown") !== "true") {
+    const storageKey = `ghostscore_powerup_shown_${walletAddress.toLowerCase()}`;
+    if (prev < 50 && newScore >= 50 && localStorage.getItem(storageKey) !== "true") {
+      powerUpWalletRef.current = walletAddress.toLowerCase();
       setPowerUpTriggered(true);
     }
-  }, [ghostScore.score]);
+  }, [ghostScore.score, walletAddress]);
 
   const handlePowerUpComplete = useCallback(() => {
     setPowerUpTriggered(false);
-    localStorage.setItem("ghostscore_powerup_shown", "true");
+    const addr = powerUpWalletRef.current;
+    if (addr) {
+      localStorage.setItem(`ghostscore_powerup_shown_${addr}`, "true");
+      powerUpWalletRef.current = "";
+    }
   }, []);
 
   // Listen for MetaMask account/disconnect changes

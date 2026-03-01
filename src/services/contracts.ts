@@ -1,30 +1,53 @@
 import { ethers } from 'ethers';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+
+import AgentIdentityRegistryABI from '../abis/AgentIdentityRegistry.json' with { type: 'json' };
+import ReputationRegistryABI from '../abis/ReputationRegistry.json' with { type: 'json' };
+import ValidationRegistryABI from '../abis/ValidationRegistry.json' with { type: 'json' };
+import APIGatekeeperABI from '../abis/APIGatekeeper.json' with { type: 'json' };
+import GovernanceABI from '../abis/Governance.json' with { type: 'json' };
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '../..');
 
 function loadAddresses(): Record<string, string> {
-  const raw = readFileSync(resolve(ROOT, 'deployed-addresses.json'), 'utf-8');
-  return JSON.parse(raw);
-}
+  const filePath = resolve(ROOT, 'deployed-addresses.json');
+  if (existsSync(filePath)) {
+    const raw = readFileSync(filePath, 'utf-8');
+    return JSON.parse(raw);
+  }
 
-function loadABI(contractDir: string, contractName: string): ethers.InterfaceAbi {
-  const artifactPath = resolve(ROOT, 'artifacts', 'contracts', contractDir, `${contractName}.json`);
-  const raw = readFileSync(artifactPath, 'utf-8');
-  return JSON.parse(raw).abi;
+  const envAddresses: Record<string, string> = {};
+  const mapping: Record<string, string> = {
+    AgentIdentityRegistry: 'AGENT_IDENTITY_REGISTRY',
+    ReputationRegistry: 'REPUTATION_REGISTRY_ADDRESS',
+    ValidationRegistry: 'VALIDATION_REGISTRY_ADDRESS',
+    APIGatekeeper: 'API_GATEKEEPER_ADDRESS',
+    Governance: 'GOVERNANCE_ADDRESS',
+  };
+
+  for (const [key, envVar] of Object.entries(mapping)) {
+    const val = process.env[envVar];
+    if (val) envAddresses[key] = val;
+  }
+
+  if (Object.keys(envAddresses).length === 0) {
+    throw new Error('No deployed-addresses.json found and no contract address env vars set');
+  }
+
+  return envAddresses;
 }
 
 const ADDRESSES = loadAddresses();
 
 const ABIS = {
-  AgentIdentityRegistry: loadABI('AgentIdentityRegistry.sol', 'AgentIdentityRegistry'),
-  ReputationRegistry: loadABI('ReputationRegistry.sol', 'ReputationRegistry'),
-  ValidationRegistry: loadABI('ValidationRegistry.sol', 'ValidationRegistry'),
-  APIGatekeeper: loadABI('APIGatekeeper.sol', 'APIGatekeeper'),
-  Governance: loadABI('Governance.sol', 'Governance'),
+  AgentIdentityRegistry: AgentIdentityRegistryABI as ethers.InterfaceAbi,
+  ReputationRegistry: ReputationRegistryABI as ethers.InterfaceAbi,
+  ValidationRegistry: ValidationRegistryABI as ethers.InterfaceAbi,
+  APIGatekeeper: APIGatekeeperABI as ethers.InterfaceAbi,
+  Governance: GovernanceABI as ethers.InterfaceAbi,
 };
 
 const MAX_RETRIES = 3;
