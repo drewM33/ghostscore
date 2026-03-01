@@ -1,0 +1,92 @@
+.powerup-cinematic-root {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.powerup-overlay {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  backdrop-filter: blur(0px);
+  transition: opacity 400ms ease, backdrop-filter 400ms ease;
+  pointer-events: auto;
+}
+.powerup-overlay--visible {
+  opacity: 0.85;
+  backdrop-filter: blur(8px);
+}
+.powerup-overlay--fading {
+  opacity: 0;
+  backdrop-filter: blur(0px);
+  transition: opacity 600ms ease, backdrop-filter 600ms ease;
+}
+
+.powerup-video-wrapper {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+.powerup-video-wrapper--visible {
+  opacity: 1;
+}
+.powerup-video-wrapper--fading {
+  opacity: 0;
+  transition: opacity 600ms ease;
+}
+
+.powerup-glow {
+  border-radius: 16px;
+  padding: 4px;
+}
+.powerup-glow--active {
+  animation: powerup-glowPulse 1.5s ease-in-out infinite;
+}
+
+.powerup-video {
+  display: block;
+  width: 100%;
+  max-width: 480px;
+  border-radius: 12px;
+}
+
+.powerup-flash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(16, 185, 129, 0.6) 0%,
+    rgba(16, 185, 129, 0.2) 40%,
+    transparent 70%
+  );
+  animation: powerup-flashPulse 300ms ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes powerup-glowPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 60px rgba(0, 255, 136, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 60px rgba(0, 255, 136, 0.6);
+  }
+}
+
+@keyframes powerup-flashPulse {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.15;
+  }
+  100% {
+    opacity: 0;
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "ghost-score-scripts",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "demo": "npx tsx demo-flow.e2e.ts",
+    "prefund": "npx tsx prefund.ts",
+    "balances": "npx tsx balance-report.ts"
+  },
+  "dependencies": {
+    "ethers": "^6.9",
+    "dotenv": "^16.3",
+    "tsx": "^4.7",
+    "typescript": "^5.3"
+  }
+}
