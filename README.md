@@ -6,7 +6,7 @@
 
 **Built in ~24 hours at [Ship Private. Ship Fast.](https://hackathon.unlink.xyz) — Unlink × Monad Hackathon (NYC, 2026)**
 
-[Demo Video](https://vimeo.com/YOUR_LINK) · [Live App](https://ghostscore-app.onrender.com) · [Submission](https://hackathon.unlink.xyz)
+[Demo Video]([https://vimeo.com/YOUR_LINK](https://vimeo.com/manage/videos/1169322338)) · [Live App](https://ghostscore.onrender.com/) 
 
 ---
 
