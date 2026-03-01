@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { existsSync } from 'fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: resolve(__dirname, '..', '.env') });
@@ -94,6 +95,20 @@ app.use('/agent', agentRoutes);
 app.use('/agents', agentRoutes);
 app.use('/provider', providerRoutes);
 app.use('/api', apiRoutes);
+
+const frontendDist = resolve(__dirname, '..', 'frontend', 'dist');
+if (existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  app.get('*', (_req, res, next) => {
+    if (_req.path.startsWith('/api') || _req.path.startsWith('/agent') ||
+        _req.path.startsWith('/agents') || _req.path.startsWith('/provider') ||
+        _req.path.startsWith('/health') || _req.path.startsWith('/pay') ||
+        _req.path.startsWith('/governance') || _req.path.startsWith('/socket.io')) {
+      return next();
+    }
+    res.sendFile(resolve(frontendDist, 'index.html'));
+  });
+}
 
 async function registerAPIs(): Promise<void> {
   const gatekeeper = getAPIGatekeeper();

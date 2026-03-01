@@ -2,7 +2,7 @@ services:
   - type: web
     name: ghostscore-api
     runtime: node
-    buildCommand: npm install
+    buildCommand: npm install && cd frontend && npm install && npm run build
     startCommand: npm start
     envVars:
       - key: MONAD_RPC_URL
